@@ -1,0 +1,97 @@
+[general]
+force_reload_dataset = false # reprocesses dataset when needed for new sequence model
+retrain_sequence_model = false # option to retrain sequence model generating synthetic activity sequences
+
+path_processed_dataset = 'data/processed' # folder where the processed dataset is saved
+path_embedding_index = 'data/embeddings' # folder where embeddings are saved
+folder_poi_descriptions = 'configs/data_settings/poi_description' # folder where descriptions for osm pois can be found
+path_excluded_pois = 'configs/data_settings/excluded_pois.toml' # file with osm pois to exclude from using in the simulation
+path_default_speeds ='configs/data_settings/travel_speeds.toml'
+
+# multiple areas and their data can be defined here, areas need to be non-overlapping
+# the data for each area should define the folder to the source files of the persona features (=persona prefixes) and population counts
+# prefix_data should contain geotiff file, e.g., https://hub.worldpop.org/geodata/summary?id=50341
+bbox_demographic_paths = [{covered_area = [[-132.63, 26.82], [-51.15, 50.51]], prefix_data = 'data/age_sex_structures', population_count_data = 'data/usa_ppp_2020_constrained.tif'}]
+# file defining encoding and decoding of travel survey activities and travel modes
+encoding_path = 'configs/data_settings/encoding.toml'
+
+seed = 42
+num_cpus = 10
+
+
+[survey_processing]
+survey_path = 'resources/mtus.csv'
+test_size = 0.2
+scanning_interval = 5
+travel_survey_sample_size = -1 # size of travel survey sample to train (-1 = sum of all weights)
+categorical_persona_features = ["SEX"] # used categorical persona features
+real_persona_features = ["AGE"] # used real persona features
+prepend_persona_features = false # option to prepend persona features to activity sequence (option is used for sequence model)
+scaler_folder = 'data/scaler' # folder where data scaler is saved
+dummy_month = 1 # used month when no other month is specified in the source data
+dummy_day = 1 # used day when no other day is specified in the source data and other constraint like certain weekday in a month do not apply
+
+
+[sequence_model]
+hidden_size = 32 # hidden size of deepar model
+num_layers = 5 # number of layers for deepar model
+dropout_rate = 0.0
+num_parallel_samples = 10 # number of sequence samples which are drawn as model output
+
+[training]
+max_epochs = 50
+batch_size = 32
+learning_rate = 0.001
+
+optimizer_weight_decay = 1e-8 # adam weight decay
+scheduler_patience = 10 # reduce learning rate on plateau scheduler patience
+
+early_stopping_min_delta = 0.001
+early_stopping_patience = 5
+
+path_logging = 'data/logging' # path where model training logs are saved
+sequence_model_dir = 'data/checkpoints' # path where model checkpoints are saved
+
+
+[tessellation]
+travel_time_folder = 'data/travel_times'
+max_cell_size = 1500     # cell size of the tessellation's cells in meters
+use_euclidean_travel = false    # if True, direct Eucledian distance will be used to calculate the travel times between cells
+
+[route_creation]
+embed_persona_features = false
+max_travel_percentage_error = 0.3
+allow_returns = true
+
+# epr parameters (Song et al. Modelling the scaling properties of human mobility. Nat. Phys. 6, 818–823 (2010))
+gamma= 0.21
+rho= 0.6
+
+# recency parameters
+alpha= 0.1
+eta= 1.6
+
+# exploration score weights
+weight_explore_poi_type_frequency = 0.03
+weight_explore_semantic_similarity = 0.94
+weight_explore_gravity = 0.03
+
+# preferential return score weights
+weight_return_frequency = 0.03
+weight_return_recency = 0.03
+weight_return_semantic_similarity = 0.94
+
+# minimum similarity score between an agent's activities and available locations to choose as a return
+return_min_similarity_score = 0.5
+
+# number of highest ranking pois to choose from
+top_n = 5
+
+# if True, all activities of an agent's segment are weighted (e.g., their duration) and used for similarity search with POIs, otherwise the activity with the highest weight is used
+use_weighted_average_search = true
+
+# if use_weighted_average_search is true, this parameter steers how high the impact of each activity on the similarity search is:
+# 0: all activities have the same influence
+# 1: default, all activities are weighted by their duration
+# n > 1: activities are raised to the power of n and normalized
+weight_impact_on_average = 1

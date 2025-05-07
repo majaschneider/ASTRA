@@ -1,0 +1,17 @@
+# default travel speeds
+[walk]
+residential= 5.0
+primary = 6.0
+secondary = 5.0
+default = 5.0
+
+[bike]
+residential = 16.0
+primary = 18.0
+secondary = 16.0
+default = 16.0
+
+[drive]
+residential = 35.0
+secondary = 50.0
+tertiary = 60.0

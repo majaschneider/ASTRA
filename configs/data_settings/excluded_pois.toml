@@ -1,0 +1,27 @@
+# excluded osm pois by map feature
+amenity =["bicycle_parking",
+  "parking_entrance",
+  "drinking_water",
+  "parking_space",
+  "compressed_air",
+  "charging_station",
+  "grit_bin",
+  "atm",
+  "post_box",
+  "bench",
+  "give_box",
+  "waste_basket",
+  "waste_disposal",
+  "recycling",
+  "clock",
+  "lounger"]
+
+building =["digester",
+  "service",
+  "tech_cab",
+  "transformer_tower",
+  "water_tower",
+  "storage_tank",
+  "silo"]
+
+leisure=["picnic_table"]
